@@ -14,7 +14,8 @@
 %undefine	with_gnomevfs
 %endif
 
-%include	/usr/lib/rpm/macros.gstreamer
+%define		__gst_inspect /usr/bin/gst-inspect-0.10
+
 Summary:	GStreamer Streaming-media framework base plugins
 Summary(pl.UTF-8):	Podstawowe wtyczki do środowiska obróbki strumieni GStreamer
 Name:		gstreamer0.10-plugins-base
