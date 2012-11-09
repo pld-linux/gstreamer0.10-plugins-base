@@ -20,7 +20,7 @@ Summary:	GStreamer Streaming-media framework base plugins
 Summary(pl.UTF-8):	Podstawowe wtyczki do środowiska obróbki strumieni GStreamer
 Name:		gstreamer0.10-plugins-base
 Version:	0.10.36
-Release:	4
+Release:	5
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
@@ -163,6 +163,7 @@ Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Provides:	gstreamer0.10-audiosink = %{version}
 Obsoletes:	gstreamer-alsa
+Obsoletes:	gstreamer-audiosink-alsa < 1.0
 Obsoletes:	gstreamer-audiosink-alsaspdif
 
 %description -n gstreamer0.10-audiosink-alsa
@@ -179,6 +180,7 @@ Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	orc >= 0.4.11
 Obsoletes:	gstreamer-audio-effects
+Obsoletes:	gstreamer-audio-effects-base < 1.0
 
 %description -n gstreamer0.10-audio-effects-base
 GStreamer base audio effects plugins.
@@ -193,6 +195,7 @@ Group:		Libraries
 #Requires:	gstreamer >= %{gst_req_ver}
 # for locales
 Requires:	%{name} = %{version}-%{release}
+Obsoletes:	gstreamer-cdparanoia < 1.0
 
 %description -n gstreamer0.10-cdparanoia
 Plugin for ripping audio tracks using cdparanoia under GStreamer.
@@ -208,6 +211,7 @@ Group:		Libraries
 #Requires:	gstreamer >= %{gst_req_ver}
 # for locales
 Requires:	%{name} = %{version}-%{release}
+Obsoletes:	gstreamer-gnomevfs < 1.0
 
 %description -n gstreamer0.10-gnomevfs
 Plugins for reading and writing through GNOME VFS.
@@ -220,6 +224,7 @@ Summary:	GStreamer libvisual plugin
 Summary(pl.UTF-8):	Wtyczka libvisual do GStreamera
 Group:		Libraries
 Requires:	gstreamer0.10 >= %{gst_req_ver}
+Obsoletes:	gstreamer-libvisual < 1.0
 
 %description -n gstreamer0.10-libvisual
 GStreamer libvisual plugin.
@@ -232,6 +237,7 @@ Summary:	GStreamer pango plugins
 Summary(pl.UTF-8):	Wtyczki pango do GStreamera
 Group:		Libraries
 Requires:	gstreamer0.10 >= %{gst_req_ver}
+Obsoletes:	gstreamer-pango < 1.0
 
 %description -n gstreamer0.10-pango
 This package contains textoverlay and timeoverlay GStreamer plugins.
@@ -245,6 +251,7 @@ Summary(pl.UTF-8):	Wtyczka Ogg Theora do GStreamera
 Group:		Libraries
 Requires:	gstreamer0.10 >= %{gst_req_ver}
 Requires:	libtheora >= 1.1
+Obsoletes:	gstreamer-theora < 1.0
 
 %description -n gstreamer0.10-theora
 GStreamer Ogg Theora plugin.
@@ -258,6 +265,7 @@ Summary(pl.UTF-8):	Wtyczka GStreamera dla źródła Video 4 Linux
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	udev-glib >= 143
+Obsoletes:	gstreamer-video4linux < 1.0
 
 %description -n gstreamer0.10-video4linux
 GStreamer plugin for Video 4 Linux source.
@@ -272,6 +280,7 @@ Group:		Libraries
 #Requires:	gstreamer >= %{gst_req_ver}
 # for locales in ogg module
 Requires:	%{name} = %{version}-%{release}
+Obsoletes:	gstreamer-vorbis < 1.0
 
 %description -n gstreamer0.10-vorbis
 Plugins for creating and playing Ogg Vorbis audio files.
@@ -285,6 +294,7 @@ Summary(pl.UTF-8):	Wtyczka wyjścia obrazu XFree86/X.org dla GStreamera
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Provides:	gstreamer0.10-videosink = %{version}
+Obsoletes:	gstreamer-imagesink-x < 1.0
 
 %description -n gstreamer0.10-imagesink-x
 Standard XFree86/X.org image sink.
@@ -298,6 +308,7 @@ Summary(pl.UTF-8):	Wtyczka wyjścia obrazu Xvideo dla GStreamera
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Provides:	gstreamer0.10-videosink = %{version}
+Obsoletes:	gstreamer-imagesink-xv < 1.0
 
 %description -n gstreamer0.10-imagesink-xv
 XFree86/X.org image sink via Xvideo extension.
