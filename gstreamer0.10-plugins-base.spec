@@ -20,7 +20,7 @@ Summary:	GStreamer Streaming-media framework base plugins
 Summary(pl.UTF-8):	Podstawowe wtyczki do środowiska obróbki strumieni GStreamer
 Name:		gstreamer0.10-plugins-base
 Version:	0.10.36
-Release:	6
+Release:	7
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
@@ -64,6 +64,8 @@ BuildRequires:	xorg-lib-libXv-devel
 BuildRequires:	zlib-devel
 # old GIR format
 BuildConflicts:	gstreamer-plugins-base-devel < 0.10.30
+# breaks OGG/Vorbis plugin
+BuildConflicts:	tremor-devel
 Requires:	glib2 >= 1:2.24
 Requires:	gstreamer0.10 >= %{gst_req_ver}
 Suggests:	iso-codes
