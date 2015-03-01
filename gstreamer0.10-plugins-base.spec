@@ -25,6 +25,7 @@ License:	LGPL v2+
 Group:		Libraries
 Source0:	http://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
 # Source0-md5:	3d2337841b132fe996e5eb2396ac9438
+Patch0:		sse-sse2-check.patch
 URL:		http://gstreamer.freedesktop.org/
 BuildRequires:	autoconf >= 2.60
 BuildRequires:	automake >= 1:1.10
@@ -320,6 +321,7 @@ Wtyczka wyjścia obrazu Xvideo dla GStreamera.
 
 %prep
 %setup -q -n %{gstname}-%{version}
+%patch0 -p1
 
 %build
 %{__libtoolize}
