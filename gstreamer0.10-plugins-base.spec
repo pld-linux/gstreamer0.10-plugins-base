@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	apidocs		# disable gtk-doc
+%bcond_with	apidocs		# enable gtk-doc
 %bcond_without	gnomevfs	# don't build gnome-vfs plugin
 %bcond_without	gnome		# disable gnome-vfs (alias)
 %bcond_without	libvisual	# don't build libvisual plugin
