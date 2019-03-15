@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without	apidocs		# disable gtk-doc
+%bcond_with	apidocs		# disable gtk-doc
 %bcond_without	gnomevfs	# don't build gnome-vfs plugin
 %bcond_without	gnome		# disable gnome-vfs (alias)
 %bcond_without	libvisual	# don't build libvisual plugin
@@ -20,7 +20,7 @@ Summary:	GStreamer Streaming-media framework base plugins
 Summary(pl.UTF-8):	Podstawowe wtyczki do środowiska obróbki strumieni GStreamer
 Name:		gstreamer0.10-plugins-base
 Version:	0.10.36
-Release:	7
+Release:	8
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
