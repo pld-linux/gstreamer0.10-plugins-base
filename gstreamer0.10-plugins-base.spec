@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	apidocs		# enable gtk-doc
+%bcond_without	apidocs		# enable gtk-doc
 %bcond_without	gnomevfs	# don't build gnome-vfs plugin
 %bcond_without	gnome		# disable gnome-vfs (alias)
 %bcond_without	libvisual	# don't build libvisual plugin
@@ -20,12 +20,13 @@ Summary:	GStreamer Streaming-media framework base plugins
 Summary(pl.UTF-8):	Podstawowe wtyczki do środowiska obróbki strumieni GStreamer
 Name:		gstreamer0.10-plugins-base
 Version:	0.10.36
-Release:	8
+Release:	9
 License:	LGPL v2+
 Group:		Libraries
 Source0:	http://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
 # Source0-md5:	3d2337841b132fe996e5eb2396ac9438
 Patch0:		sse-sse2-check.patch
+Patch1:		gstreamer-common-gtkdoc.patch
 URL:		http://gstreamer.freedesktop.org/
 BuildRequires:	autoconf >= 2.60
 BuildRequires:	automake >= 1:1.10
@@ -65,8 +66,6 @@ BuildRequires:	xorg-lib-libXv-devel
 BuildRequires:	zlib-devel
 # old GIR format
 BuildConflicts:	gstreamer-plugins-base-devel < 0.10.30
-# breaks OGG/Vorbis plugin
-BuildConflicts:	tremor-devel
 Requires:	glib2 >= 1:2.24
 Requires:	gstreamer0.10 >= %{gst_req_ver}
 Suggests:	iso-codes
@@ -322,6 +321,8 @@ Wtyczka wyjścia obrazu Xvideo dla GStreamera.
 %prep
 %setup -q -n %{gstname}-%{version}
 %patch0 -p1
+cd common
+%patch1 -p1
 
 %build
 %{__libtoolize}
@@ -329,10 +330,12 @@ Wtyczka wyjścia obrazu Xvideo dla GStreamera.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
+# ivorbis expects some old version of tremor
 %configure \
 	%{!?with_gnomevfs:--disable-gnome_vfs} \
 	%{!?with_libvisual:--disable-libvisual} \
 	--disable-examples \
+	--disable-ivorbis \
 	--disable-silent-rules \
 	--disable-static \
 	--enable-experimental \
@@ -350,7 +353,8 @@ rm -rf $RPM_BUILD_ROOT
 
 # We don't need plugins' *.la files
 %{__rm} $RPM_BUILD_ROOT%{gstlibdir}/*.la
-# *.la for libs kept - no .private dependencies in *.pc
+# obsoleted by pkg-config
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libgst*.la
 
 %find_lang %{gstname}-%{gst_major_ver}
 
@@ -439,19 +443,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libgstsdp-*.so
 %attr(755,root,root) %{_libdir}/libgsttag-*.so
 %attr(755,root,root) %{_libdir}/libgstvideo-*.so
-%{_libdir}/libgstapp-*.la
-%{_libdir}/libgstaudio-*.la
-%{_libdir}/libgstcdda-*.la
-%{_libdir}/libgstfft-*.la
-%{_libdir}/libgstinterfaces-*.la
-%{_libdir}/libgstnetbuffer-*.la
-%{_libdir}/libgstpbutils-*.la
-%{_libdir}/libgstriff-*.la
-%{_libdir}/libgstrtp-*.la
-%{_libdir}/libgstrtsp-*.la
-%{_libdir}/libgstsdp-*.la
-%{_libdir}/libgsttag-*.la
-%{_libdir}/libgstvideo-*.la
 %{gstincludedir}/gst/app
 %{gstincludedir}/gst/audio
 %{gstincludedir}/gst/cdda
@@ -497,8 +488,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with apidocs}
 %files apidocs
 %defattr(644,root,root,755)
-%{_gtkdocdir}/gst-plugins-base-libs-*
-%{_gtkdocdir}/gst-plugins-base-plugins-*
+%{_gtkdocdir}/gst-plugins-base-libs-0.10
+%{_gtkdocdir}/gst-plugins-base-plugins-0.10
 %endif
 
 ##

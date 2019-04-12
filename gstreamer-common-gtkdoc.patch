@@ -1,0 +1,284 @@
+From 2de221ce94b657f9c9a75aa3cc0cb84dbb5da78b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Olivier=20Cr=C3=AAte?= <olivier.crete@collabora.co.uk>
+Date: Mon, 28 Jan 2013 20:28:09 +0100
+Subject: [PATCH] gtk-doc*.mak: Put the API version in the html book name
+
+This causes devhelp2 files to get a version. Due to that devhelp can show it
+along with the 0.10 version.
+---
+ gtk-doc-plugins.mak | 11 ++++-------
+ gtk-doc.mak         | 11 ++++-------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/gtk-doc-plugins.mak b/gtk-doc-plugins.mak
+index f69d9d7..f19e7d7 100644
+--- a/gtk-doc-plugins.mak
++++ b/gtk-doc-plugins.mak
+@@ -222,10 +222,7 @@ html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
+ 	    mkhtml_options="$$mkhtml_options --verbose"; \
+ 	  fi; \
+ 	fi; \
+-	cd html && gtkdoc-mkhtml $$mkhtml_options $(DOC_MODULE) $(DOC_MAIN_SGML_FILE)
+-	@mv html/index.sgml html/index.sgml.bak
+-	@$(SED) "s/ href=\"$(DOC_MODULE)\// href=\"$(DOC_MODULE)-@GST_MAJORMINOR@\//g" html/index.sgml.bak >html/index.sgml
+-	@rm -f html/index.sgml.bak
++	cd html && gtkdoc-mkhtml $$mkhtml_options $(DOC_MODULE)-@GST_MAJORMINOR@ $(DOC_MAIN_SGML_FILE)
+ 	@rm -f html/$(DOC_MAIN_SGML_FILE)
+ 	@rm -rf html/xml
+ 	@rm -f html/version.entities
+@@ -289,9 +286,9 @@ install-data-local:
+ 	      $(INSTALL_DATA) $$i $(DESTDIR)$(TARGET_DIR); \
+ 	    done; \
+ 	  fi; \
+-	  echo '-- Installing $(builddir)/html/$(DOC_MODULE).devhelp2' ; \
+-	  if test -e $(builddir)/html/$(DOC_MODULE).devhelp2; then \
+-	            $(INSTALL_DATA) $(builddir)/html/$(DOC_MODULE).devhelp2 \
++	  echo '-- Installing $(builddir)/html/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2' ; \
++	  if test -e $(builddir)/html/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; then \
++	            $(INSTALL_DATA) $(builddir)/html/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2 \
+ 	            $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; \
+ 	  fi; \
+ 	  $(GTKDOC_REBASE) --relative --dest-dir=$(DESTDIR) --html-dir=$(DESTDIR)$(TARGET_DIR) || true ; \
+diff --git a/gtk-doc.mak b/gtk-doc.mak
+index 17cee71..9d76889 100644
+--- a/gtk-doc.mak
++++ b/gtk-doc.mak
+@@ -130,10 +130,7 @@ html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
+ 	if test "$(?)" = "0"; then \
+ 	  mkhtml_options=--path="$(abs_srcdir)"; \
+ 	fi; \
+-	cd html && gtkdoc-mkhtml $$mkhtml_options $(MKHTML_OPTIONS) $(DOC_MODULE) ../$(DOC_MAIN_SGML_FILE)
+-	@mv html/index.sgml html/index.sgml.bak
+-	@$(SED) "s/ href=\"$(DOC_MODULE)\// href=\"$(DOC_MODULE)-@GST_MAJORMINOR@\//g" html/index.sgml.bak >html/index.sgml
+-	@rm -f html/index.sgml.bak
++	cd html && gtkdoc-mkhtml $$mkhtml_options $(MKHTML_OPTIONS) $(DOC_MODULE)-@GST_MAJORMINOR@ ../$(DOC_MAIN_SGML_FILE)
+ 	@rm -rf html/xml
+ 	@rm -f version.entities
+ 	@test "x$(HTML_IMAGES)" = "x" ||  ( cd $(srcdir) && cp $(HTML_IMAGES) $(abs_builddir)/html )
+@@ -189,9 +186,9 @@ install-data-local:
+ 	    echo '-- Installing '$$i ; \
+ 	    $(INSTALL_DATA) $$i $(DESTDIR)$(TARGET_DIR); \
+ 	  done; \
+-	  echo '-- Installing $(builddir)/html/$(DOC_MODULE).devhelp2' ; \
+-	  if test -e $(builddir)/html/$(DOC_MODULE).devhelp2; then \
+-	            $(INSTALL_DATA) $(builddir)/html/$(DOC_MODULE).devhelp2 \
++	  echo '-- Installing $(builddir)/html/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2' ; \
++	  if test -e $(builddir)/html/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; then \
++	            $(INSTALL_DATA) $(builddir)/html/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2 \
+ 	            $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; \
+ 	  fi; \
+ 	  $(GTKDOC_REBASE) --relative --dest-dir=$(DESTDIR) --html-dir=$(DESTDIR)$(TARGET_DIR) || true ; \
+From d37af32e2d6d1b546af72978f8441a84996ab3ea Mon Sep 17 00:00:00 2001
+From: Stefan Sauer <ensonic@users.sf.net>
+Date: Sun, 7 Jun 2015 20:12:05 +0200
+Subject: [PATCH] mangle-tmpl.py: generate tmpl files instead of merging
+
+We don't have any hand-written docs in tmpl files. Stop generating them with
+gtkdoc and just write the minimal files ourself.
+---
+ gtk-doc-plugins.mak | 15 +++--------
+ mangle-tmpl.py      | 72 ++++++++++++-----------------------------------------
+ 2 files changed, 19 insertions(+), 68 deletions(-)
+
+diff --git a/gtk-doc-plugins.mak b/gtk-doc-plugins.mak
+index 5d9b2f9..767e55a 100644
+--- a/gtk-doc-plugins.mak
++++ b/gtk-doc-plugins.mak
+@@ -171,19 +171,10 @@ scan-build.stamp: $(HFILE_GLOB) $(EXTRA_HFILES) $(basefiles) scanobj-build.stamp
+ 	    --ignore-headers="$(IGNORE_HFILES)";			\
+ 	touch scan-build.stamp
+ 
+-#### update templates; done on every build ####
++#### generate templates; done on every build ####
+ 
+-# in a non-srcdir build, we need to copy files from the previous step
+-# and the files from previous runs of this step
+-tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_OVERRIDES)
+-	@echo '  DOC   Rebuilding template files'
+-	@if test x"$(srcdir)" != x. ; then				\
+-	    for f in $(SCANOBJ_FILES) $(SCAN_FILES);			\
+-	    do								\
+-	        if test -e $(srcdir)/$$f; then cp -u $(srcdir)/$$f . ; fi;	\
+-	    done;							\
+-	fi
+-	@gtkdoc-mktmpl --module=$(DOC_MODULE)
++tmpl-build.stamp:
++	@echo '  DOC   Building template files'
+ 	@$(PYTHON) \
+ 		$(top_srcdir)/common/mangle-tmpl.py $(srcdir)/$(INSPECT_DIR) tmpl
+ 	@touch tmpl-build.stamp
+diff --git a/mangle-tmpl.py b/mangle-tmpl.py
+index 51ea8c2..7a92d04 100644
+--- a/mangle-tmpl.py
++++ b/mangle-tmpl.py
+@@ -2,21 +2,12 @@
+ # vi:si:et:sw=4:sts=4:ts=4
+ 
+ """
+-use the output from gst-xmlinspect.py to mangle tmpl/*.sgml and
+-insert/overwrite Short Description and Long Description
++use the files from inspect/*.xml to create mininal tmpl/*.sgml files containing
++'Short Description' and 'Long Description' to inject element details into the
++docbook files produced by gtkdoc-mkdb
+ """
+ 
+-# FIXME: right now it uses pygst and scans on its own;
+-# we really should use inspect/*.xml instead since the result of
+-# gst-xmlinspect.py is committed by the docs maintainer, who can be
+-# expected to have pygst, but this step should be done for every docs build,
+-# so no pygst allowed
+-
+-# read in inspect/*.xml
+-# for every tmpl/element-(name).xml: mangle with details from element
+-
+ import glob
+-import re
+ import sys
+ import os
+ 
+@@ -28,37 +19,12 @@ def __init__(self, filename):
+         self._sectionids = []
+         self._sections = {}
+ 
+-    def read(self):
+-        """
+-        Read and parse the sections from the given file.
+-        """
+-        lines = open(self.filename).readlines()
+-        matcher = re.compile("<!-- ##### SECTION (\S+) ##### -->\n")
+-        id = None
+-
+-        for line in lines:
+-            match = matcher.search(line)
+-            if match:
+-                id = match.expand("\\1")
+-                self._sectionids.append(id)
+-                self._sections[id] = []
+-            else:
+-                if not id:
+-                    sys.stderr.write(
+-                        "WARNING: line before a SECTION header: %s" % line)
+-                else:
+-                    self._sections[id].append(line)
+-
+-    def get_section(self, id):
+-        """
+-        Get the content from the given section.
+-        """
+-        return self._sections[id]
+-
+     def set_section(self, id, content):
+         """
+         Replace the given section id with the given content.
+         """
++        if not id in self._sectionids:
++            self._sectionids.append(id)
+         self._sections[id] = content
+ 
+     def output(self):
+@@ -73,14 +39,10 @@ def output(self):
+ 
+         return "".join(lines)
+ 
+-    def write(self, backup=False):
++    def write(self):
+         """
+         Write out the template file again, backing up the previous one.
+         """
+-        if backup:
+-            target = self.filename + ".mangle.bak"
+-            os.rename(self.filename, target)
+-
+         handle = open(self.filename, "w")
+         handle.write(self.output())
+         handle.close()
+@@ -136,30 +98,28 @@ def main():
+     inspectdir = sys.argv[1]
+     tmpldir = sys.argv[2]
+ 
++    if not os.path.exists (tmpldir):
++        os.mkdir(tmpldir)
++
+     # parse all .xml files; build map of element name -> short desc
+     #for file in glob.glob("inspect/plugin-*.xml"):
+     elements = {}
+     for file in glob.glob("%s/plugin-*.xml" % inspectdir):
+         elements.update(get_elements(file))
+ 
+-    for file in glob.glob("%s/element-*.sgml" % tmpldir):
+-        base = os.path.basename(file)
+-        element = base[len("element-"):-len(".sgml")]
++    for element in elements.keys():
++        file = "%s/element-%s.sgml" % (tmpldir, element)
+         tmpl = Tmpl(file)
+-        tmpl.read()
+-        if element in elements.keys():
+-            description = elements[element]['description']
+-            tmpl.set_section("Short_Description", "%s\n\n" % description)
+ 
+-        # put in an include if not yet there
++        description = elements[element]['description']
++        tmpl.set_section("Short_Description", "%s\n" % description)
++
++        # add include for details
+         line = '<include xmlns="http://www.w3.org/2003/XInclude" href="' + \
+             'element-' + element + '-details.xml">' + \
+             '<fallback xmlns="http://www.w3.org/2003/XInclude" />' + \
+             '</include>\n'
+-        section = tmpl.get_section("Long_Description")
+-        if not section[0]  == line:
+-            section.insert(0, line)
+-        tmpl.set_section("Long_Description", section)
++        tmpl.set_section("Long_Description", line)
+         tmpl.write()
+ 
+ main()
+From f363b3205658a38e84fa77f19dee218cd4445275 Mon Sep 17 00:00:00 2001
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Date: Mon, 20 Jun 2016 15:38:01 -0400
+Subject: [PATCH] Fix handling of DOC_SOURCE_DIR list
+
+As some places we where assuming a single directory. This caused some
+plugins documentation to be ignored.
+---
+ gtk-doc-plugins.mak | 8 ++++++--
+ gtk-doc.mak         | 6 +++++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/gtk-doc-plugins.mak b/gtk-doc-plugins.mak
+index fe0977c..4b5dd1b 100644
+--- a/gtk-doc-plugins.mak
++++ b/gtk-doc-plugins.mak
+@@ -179,9 +179,13 @@ sgml-build.stamp: scan-build.stamp $(CFILE_GLOB) $(top_srcdir)/common/plugins.xs
+ 		$(top_srcdir)/common/plugins.xsl $$a > xml/`basename $$a`; done
+ 	@for f in $(EXAMPLE_CFILES); do \
+ 		$(PYTHON) $(top_srcdir)/common/c-to-xml.py $$f > xml/element-`basename $$f .c`.xml; done
+-	@gtkdoc-mkdb \
++	@_source_dir='' ;						\
++	for i in $(DOC_SOURCE_DIR) ; do					\
++	    _source_dir="$${_source_dir} --source-dir=$$i" ;	        \
++	done ;								\
++	gtkdoc-mkdb \
+ 		--module=$(DOC_MODULE) \
+-		--source-dir=$(DOC_SOURCE_DIR) \
++		$${_source_dir} \
+ 		 --expand-content-files="$(expand_content_files)" \
+ 		--main-sgml-file=$(srcdir)/$(DOC_MAIN_SGML_FILE) \
+ 		--output-format=xml \
+diff --git a/gtk-doc.mak b/gtk-doc.mak
+index 2aab3a9..4beebcf 100644
+--- a/gtk-doc.mak
++++ b/gtk-doc.mak
+@@ -121,7 +121,11 @@ $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)
+ 
+ sgml-build.stamp: setup-build.stamp $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(expand_content_files)
+ 	@echo '  DOC   Building XML'
+-	@gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR)  --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) --output-format=xml $(MKDB_OPTIONS)
++	@_source_dir='' ;						\
++	for i in $(DOC_SOURCE_DIR) ; do					\
++	    _source_dir="$${_source_dir} --source-dir=$$i" ;	        \
++	done ;							        \
++	gtkdoc-mkdb --module=$(DOC_MODULE) $$(_source_dir)  --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) --output-format=xml $(MKDB_OPTIONS)
+ 	@cp ../version.entities xml
+ 	@touch sgml-build.stamp
+ 
