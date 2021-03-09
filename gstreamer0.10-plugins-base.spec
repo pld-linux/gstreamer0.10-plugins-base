@@ -1,9 +1,9 @@
 #
 # Conditional build:
-%bcond_without	apidocs		# enable gtk-doc
-%bcond_without	gnomevfs	# don't build gnome-vfs plugin
-%bcond_without	gnome		# disable gnome-vfs (alias)
-%bcond_without	libvisual	# don't build libvisual plugin
+%bcond_without	apidocs		# gtk-doc based API documentation
+%bcond_without	gnomevfs	# gnome-vfs plugin
+%bcond_without	gnome		# gnome-vfs (alias)
+%bcond_without	libvisual	# libvisual plugin
 %bcond_with	v4l1		# Video4Linux 1 plugin (for Linux < 2.6.35 or so)
 
 %define		gstname		gst-plugins-base
@@ -23,11 +23,12 @@ Version:	0.10.36
 Release:	9
 License:	LGPL v2+
 Group:		Libraries
-Source0:	http://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
+Source0:	https://gstreamer.freedesktop.org/src/gst-plugins-base/%{gstname}-%{version}.tar.xz
 # Source0-md5:	3d2337841b132fe996e5eb2396ac9438
 Patch0:		sse-sse2-check.patch
 Patch1:		gstreamer-common-gtkdoc.patch
-URL:		http://gstreamer.freedesktop.org/
+Patch2:		gstreamer-common-make.patch
+URL:		https://gstreamer.freedesktop.org/
 BuildRequires:	autoconf >= 2.60
 BuildRequires:	automake >= 1:1.10
 %{?with_apidocs:BuildRequires:	docbook-dtd412-xml}
@@ -58,6 +59,7 @@ BuildRequires:	libtheora-devel >= 1.1
 %{?with_libvisual:BuildRequires:	libvisual-devel >= 0.4.0}
 BuildRequires:	libvorbis-devel >= 1:1.0
 BuildRequires:	pango-devel >= 1:1.16.0
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.98
 BuildRequires:	udev-glib-devel >= 143
 BuildRequires:	xorg-lib-libX11-devel
@@ -69,36 +71,36 @@ BuildConflicts:	gstreamer-plugins-base-devel < 0.10.30
 Requires:	glib2 >= 1:2.24
 Requires:	gstreamer0.10 >= %{gst_req_ver}
 Suggests:	iso-codes
-Obsoletes:	gstreamer-artsd
-Obsoletes:	gstreamer-audio-effects
-Obsoletes:	gstreamer-audiofile
-Obsoletes:	gstreamer-avi
-Obsoletes:	gstreamer-cdplayer
-Obsoletes:	gstreamer-colorspace
-Obsoletes:	gstreamer-festival
-Obsoletes:	gstreamer-interfaces
-Obsoletes:	gstreamer-interleave
-Obsoletes:	gstreamer-kio
-Obsoletes:	gstreamer-libdvdnav
-Obsoletes:	gstreamer-libfame
-Obsoletes:	gstreamer-media-info
-Obsoletes:	gstreamer-mikmod
-Obsoletes:	gstreamer-misc
-Obsoletes:	gstreamer-oneton
-Obsoletes:	gstreamer-play
-Obsoletes:	gstreamer-plugins
-Obsoletes:	gstreamer-qcam
-Obsoletes:	gstreamer-snapshot
-Obsoletes:	gstreamer-tcp
-Obsoletes:	gstreamer-tuner
-Obsoletes:	gstreamer-v4l
-Obsoletes:	gstreamer-vbidec
-Obsoletes:	gstreamer-videosink-xv
-Obsoletes:	gstreamer-videotest
-Obsoletes:	gstreamer-xine
-Obsoletes:	gstreamer-xoverlay
-Obsoletes:	gstreamer-yuv4mjpeg
-Obsoletes:	gtk-loaders-gstreamer
+Obsoletes:	gstreamer-artsd < 0.10
+Obsoletes:	gstreamer-audio-effects < 0.10
+Obsoletes:	gstreamer-audiofile < 0.10
+Obsoletes:	gstreamer-avi < 0.10
+Obsoletes:	gstreamer-cdplayer < 0.10
+Obsoletes:	gstreamer-colorspace < 0.10
+Obsoletes:	gstreamer-festival < 0.10
+Obsoletes:	gstreamer-interfaces < 0.10
+Obsoletes:	gstreamer-interleave < 0.10
+Obsoletes:	gstreamer-kio < 0.10
+Obsoletes:	gstreamer-libdvdnav < 0.10
+Obsoletes:	gstreamer-libfame < 0.10
+Obsoletes:	gstreamer-media-info < 0.10
+Obsoletes:	gstreamer-mikmod < 0.10
+Obsoletes:	gstreamer-misc < 0.8-1
+Obsoletes:	gstreamer-oneton < 0.10
+Obsoletes:	gstreamer-play < 0.10
+Obsoletes:	gstreamer-plugins < 0.10
+Obsoletes:	gstreamer-qcam < 0.10
+Obsoletes:	gstreamer-snapshot < 0.10
+Obsoletes:	gstreamer-tcp < 0.10
+Obsoletes:	gstreamer-tuner < 0.10
+Obsoletes:	gstreamer-v4l < 0.10
+Obsoletes:	gstreamer-vbidec < 0.10
+Obsoletes:	gstreamer-videosink-xv < 0.10
+Obsoletes:	gstreamer-videotest < 0.10
+Obsoletes:	gstreamer-xine < 0.10
+Obsoletes:	gstreamer-xoverlay < 0.10
+Obsoletes:	gstreamer-yuv4mjpeg < 0.10
+Obsoletes:	gtk-loaders-gstreamer < 0.10
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		gstlibdir 	%{_libdir}/gstreamer-%{gst_major_ver}
@@ -127,14 +129,14 @@ Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	glib2-devel >= 1:2.24
 Requires:	gstreamer0.10-devel >= %{gst_req_ver}
-Obsoletes:	gstreamer-interfaces-devel
-Obsoletes:	gstreamer-media-info-devel
-Obsoletes:	gstreamer-mixer-devel
-Obsoletes:	gstreamer-navigation-devel
-Obsoletes:	gstreamer-play-devel
-Obsoletes:	gstreamer-plugins-devel
-Obsoletes:	gstreamer-tuner-devel
-Obsoletes:	gstreamer-xoverlay-devel
+Obsoletes:	gstreamer-interfaces-devel < 0.10
+Obsoletes:	gstreamer-media-info-devel < 0.10
+Obsoletes:	gstreamer-mixer-devel < 0.10
+Obsoletes:	gstreamer-navigation-devel < 0.10
+Obsoletes:	gstreamer-play-devel < 0.10
+Obsoletes:	gstreamer-plugins-devel < 0.10
+Obsoletes:	gstreamer-tuner-devel < 0.10
+Obsoletes:	gstreamer-xoverlay-devel < 0.10
 
 %description devel
 Include files for GStreamer streaming-media framework plugins.
@@ -147,6 +149,7 @@ Summary:	GStreamer streaming-media framework plugins API documentation
 Summary(pl.UTF-8):	Dokumentacja API wtyczek środowiska obróbki strumieni GStreamer
 Group:		Documentation
 Requires:	gtk-doc-common
+BuildArch:	noarch
 
 %description apidocs
 GStreamer streaming-media framework plugins API documentation.
@@ -164,7 +167,7 @@ Summary(pl.UTF-8):	Wtyczki GStreamera do obsługi architektury ALSA
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Provides:	gstreamer0.10-audiosink = %{version}
-Obsoletes:	gstreamer-alsa
+Obsoletes:	gstreamer-alsa < 0.10
 Obsoletes:	gstreamer-audiosink-alsa < 1.0
 Obsoletes:	gstreamer-audiosink-alsaspdif
 
@@ -181,7 +184,7 @@ Summary(pl.UTF-8):	Podstawowe wtyczki efektów dźwiękowych do GStreamera
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	orc >= 0.4.11
-Obsoletes:	gstreamer-audio-effects
+Obsoletes:	gstreamer-audio-effects < 0.10
 Obsoletes:	gstreamer-audio-effects-base < 1.0
 
 %description -n gstreamer0.10-audio-effects-base
@@ -323,6 +326,7 @@ Wtyczka wyjścia obrazu Xvideo dla GStreamera.
 %patch0 -p1
 cd common
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}

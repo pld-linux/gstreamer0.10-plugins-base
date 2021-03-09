@@ -1,0 +1,12 @@
+--- common/gst-glib-gen.mak.orig	2011-12-11 20:03:48.000000000 +0100
++++ common/gst-glib-gen.mak	2021-03-09 20:15:55.054080056 +0100
+@@ -6,7 +6,8 @@
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++gst_hash = \#
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(gst_hash)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
