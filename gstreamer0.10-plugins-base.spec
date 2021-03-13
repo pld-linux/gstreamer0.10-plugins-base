@@ -169,7 +169,7 @@ Requires:	%{name} = %{version}-%{release}
 Provides:	gstreamer0.10-audiosink = %{version}
 Obsoletes:	gstreamer-alsa < 0.10
 Obsoletes:	gstreamer-audiosink-alsa < 1.0
-Obsoletes:	gstreamer-audiosink-alsaspdif
+Obsoletes:	gstreamer-audiosink-alsaspdif < 0.10.21
 
 %description -n gstreamer0.10-audiosink-alsa
 Input and output plugin for the ALSA soundcard driver architecture.
